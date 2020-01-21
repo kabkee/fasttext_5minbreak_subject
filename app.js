@@ -94,10 +94,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/fasttext', (req, res) => {
+	if (!req.query.statement) {
+		res.send('잘못된 요청입니다.');
+	}
+
 	let statement = req.query.statement
 	getFastTextResults(statement, (data) => {
 		// console.log(statement, data)
-		res.send(data)
+				res.send(data)
 	});
 })
 
