@@ -2,7 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// var logger = require('morgan');
 const fastText = require('fasttext');
 const cors = require('cors')
 var fs = require('fs');
@@ -16,7 +16,7 @@ app.use(cors())
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -57,7 +57,7 @@ app.get('/training', (req, res) => {
 					return;
 				}
 
-				var logger = fs.createWriteStream(inputData, {
+				var fileSystemInst = fs.createWriteStream(inputData, {
 					flags: 'a' // 'a' means appending (old data will be preserved)
 				})
 	
@@ -69,9 +69,9 @@ app.get('/training', (req, res) => {
 					}
 					// __label__hoonhoon 홍대 일본여성 폭행 사건의 진실
 					newLine = `__label__${row[1]} ${row[3]}`;
-					logger.write(newLine + os.EOL);
+					fileSystemInst.write(newLine + os.EOL);
 				})
-				logger.end();
+				fileSystemInst.end();
 
 				let outputData = path.resolve(path.join(__dirname, '/data/5minbreak.model'));
 				let config = {
@@ -105,7 +105,6 @@ app.get('/fasttext', (req, res) => {
 function getFastTextResults(statement, callbackFnc) {
 	let model = path.resolve(path.join(__dirname, '/data/5minbreak.model.bin'));
 	const classifier = new fastText.Classifier(model);
-	let returnValue;
 	classifier.predict(statement, 3)
 		.then((res) => {
 			if (res.length > 0) {
